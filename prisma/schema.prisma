@@ -16,6 +16,7 @@ datasource db {
 model Produto {
   id    Int     @id @default(autoincrement())
   nome  String
+  preco Float
   tag   String
   pedidos PedidoProduto[]
 }
