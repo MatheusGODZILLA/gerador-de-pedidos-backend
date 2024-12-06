@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateProdutoDto } from 'dto/create-produto.dto';
 
 @Injectable()
 export class ProdutosService {
@@ -21,5 +22,16 @@ export class ProdutosService {
       throw new NotFoundException(`Produto com ID ${id} não encontrado.`);
     }
     return produto;
+  }
+
+  async create(produto: CreateProdutoDto) {
+    try {
+      const novoProduto = await this.prisma.produto.create({
+        data: produto,
+      });
+      return novoProduto;
+    } catch (error) {
+      throw new Error(`Erro ao criar um novo produto: ${error.message}`);
+    }
   }
 }
