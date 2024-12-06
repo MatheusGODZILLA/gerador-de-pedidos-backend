@@ -48,4 +48,16 @@ export class ProdutosService {
         Erro ao atualizar o produto com ID ${id}: ${error.message}`);
     }
   }
+
+  async delete(id: number) {
+    try {
+      const produtoDeletado = await this.prisma.produto.delete({
+        where: { id },
+      });
+      return produtoDeletado;
+    } catch (error) {
+      throw new Error(`
+        Erro ao deletar o produto com ID ${id}: ${error.message}`);
+    }
+  }
 }
