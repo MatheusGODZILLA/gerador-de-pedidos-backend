@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateClienteDto } from 'dto/clientes/create-cliente.dto';
 
 @Injectable()
 export class ClientesService {
@@ -21,5 +22,26 @@ export class ClientesService {
       throw new NotFoundException(`Cliente com ID ${id} não encontrado.`);
     }
     return cliente;
+  }
+
+  async create(cliente: CreateClienteDto) {
+    try {
+      const novoCliente = await this.prisma.cliente.create({
+        data: {
+          nome: cliente.nome,
+          endereco: {
+            create: cliente.endereco,
+          },
+          telefone: cliente.telefone,
+          empresa: cliente.empresa,
+        },
+        include: {
+          endereco: true,
+        },
+      });
+      return novoCliente;
+    } catch (error) {
+      throw new Error(`Erro ao criar um novo cliente: ${error.message}`);
+    }
   }
 }
