@@ -4,6 +4,8 @@ CREATE TABLE "Produto" (
     "nome" TEXT NOT NULL,
     "preco" DOUBLE PRECISION NOT NULL,
     "tag" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Produto_pkey" PRIMARY KEY ("id")
 );
@@ -15,6 +17,8 @@ CREATE TABLE "Cliente" (
     "enderecoId" INTEGER NOT NULL,
     "telefone" TEXT NOT NULL,
     "empresa" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Cliente_pkey" PRIMARY KEY ("id")
 );
@@ -35,6 +39,8 @@ CREATE TABLE "Endereco" (
 CREATE TABLE "Pedido" (
     "id" SERIAL NOT NULL,
     "clienteId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Pedido_pkey" PRIMARY KEY ("id")
 );
