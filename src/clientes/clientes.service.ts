@@ -67,4 +67,15 @@ export class ClientesService {
       throw new Error(`Erro ao atualizar o cliente: ${error.message}`);
     }
   }
+
+  async delete(id: number) {
+    try {
+      const clienteDeletado = await this.prisma.cliente.delete({
+        where: { id },
+      });
+      return clienteDeletado;
+    } catch (error) {
+      throw new Error(`Erro ao deletar o cliente: ${error.message}`);
+    }
+  }
 }
