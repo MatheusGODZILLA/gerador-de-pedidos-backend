@@ -19,6 +19,8 @@ model Produto {
   preco Float
   tag   String
   pedidos PedidoProduto[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Cliente {
@@ -29,6 +31,8 @@ model Cliente {
   telefone   String
   empresa    String?
   pedidos    Pedido[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Endereco {
@@ -46,6 +50,8 @@ model Pedido {
   clienteId  Int
   cliente    Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   produtos   PedidoProduto[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model PedidoProduto {
