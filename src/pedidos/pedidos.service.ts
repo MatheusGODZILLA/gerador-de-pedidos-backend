@@ -103,4 +103,15 @@ export class PedidosService {
 
     return pedidoAtualizado;
   }
+
+  async delete(id: number) {
+    try {
+      const deletedPedido = await this.prisma.pedido.delete({
+        where: { id },
+      });
+      return deletedPedido;
+    } catch (error) {
+      throw new Error(`Erro ao deletar o pedido: ${error.message}`);
+    }
+  }
 }
