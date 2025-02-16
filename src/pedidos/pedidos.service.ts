@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePedidoDto } from 'dto/pedidos/create-pedido.dto';
+import { UpdatePedidoDto } from 'dto/pedidos/update-pedido.dto';
 
 @Injectable()
 export class PedidosService {
@@ -32,8 +33,7 @@ export class PedidosService {
         where: { id: { in: produtosIds } },
       });
 
-      // Calcula o valor total do pedido
-      const total = produtos.reduce((soma, item) => {
+      let total = produtos.reduce((soma, item) => {
         const produtoEncontrado = produtosData.find(
           (prod) => prod.id === item.produtoId,
         );
@@ -43,7 +43,8 @@ export class PedidosService {
         return soma + produtoEncontrado.preco * item.quantidade;
       }, 0);
 
-      // Cria o pedido e os itens relacionados (PedidoProduto)
+      total = parseFloat(total.toFixed(2));
+
       const novoPedido = await this.prisma.pedido.create({
         data: {
           cliente: { connect: { id: clienteId } },
@@ -62,5 +63,44 @@ export class PedidosService {
     } catch (error) {
       throw new Error(`Erro ao criar um novo pedido: ${error.message}`);
     }
+  }
+
+  async update(id: number, updatePedidoDto: UpdatePedidoDto) {
+    const { clienteId, produtos, observacao } = updatePedidoDto;
+
+    const produtoIds = produtos.map((item) => item.produtoId);
+    const produtosData = await this.prisma.produto.findMany({
+      where: { id: { in: produtoIds } },
+    });
+
+    let total = produtos.reduce((soma, item) => {
+      const produtoEncontrado = produtosData.find(
+        (prod) => prod.id === item.produtoId,
+      );
+      if (!produtoEncontrado) {
+        throw new Error(`Produto com ID ${item.produtoId} não encontrado`);
+      }
+      return soma + produtoEncontrado.preco * item.quantidade;
+    }, 0);
+
+    total = parseFloat(total.toFixed(2));
+
+    const pedidoAtualizado = await this.prisma.pedido.update({
+      where: { id },
+      data: {
+        cliente: { connect: { id: clienteId } },
+        total,
+        observacao,
+        produtos: {
+          deleteMany: {},
+          create: produtos.map((item) => ({
+            produto: { connect: { id: item.produtoId } },
+            quantidade: item.quantidade,
+          })),
+        },
+      },
+    });
+
+    return pedidoAtualizado;
   }
 }
