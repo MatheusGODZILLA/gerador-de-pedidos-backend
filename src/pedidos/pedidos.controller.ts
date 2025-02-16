@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Post, Body, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Body,
+  Put,
+  Delete,
+} from '@nestjs/common';
 import { PedidosService } from './pedidos.service';
 import { CreatePedidoDto } from 'dto/pedidos/create-pedido.dto';
 import { UpdatePedidoDto } from 'dto/pedidos/update-pedido.dto';
@@ -28,5 +36,10 @@ export class PedidosController {
     @Body() updatePedidoDto: UpdatePedidoDto,
   ) {
     return this.pedidosService.update(Number(id), updatePedidoDto);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return this.pedidosService.delete(Number(id));
   }
 }
