@@ -1,6 +1,7 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put } from '@nestjs/common';
 import { PedidosService } from './pedidos.service';
 import { CreatePedidoDto } from 'dto/pedidos/create-pedido.dto';
+import { UpdatePedidoDto } from 'dto/pedidos/update-pedido.dto';
 
 @Controller('pedidos')
 export class PedidosController {
@@ -19,5 +20,13 @@ export class PedidosController {
   @Post()
   async create(@Body() pedido: CreatePedidoDto) {
     return this.pedidosService.create(pedido);
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updatePedidoDto: UpdatePedidoDto,
+  ) {
+    return this.pedidosService.update(Number(id), updatePedidoDto);
   }
 }
