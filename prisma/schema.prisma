@@ -13,50 +13,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Produto {
-  id    Int     @id @default(autoincrement())
-  nome  String
-  preco Float
-  tag   String
-  pedidos PedidoProduto[]
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  senha     String
+  nome      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+}
+
+model Produto {
+  id         Int             @id @default(autoincrement())
+  nome       String
+  preco      Float
+  tag        String
+  pedidos    PedidoProduto[]
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @default(now())
 }
 
 model Cliente {
   id         Int      @id @default(autoincrement())
   nome       String
   endereco   Endereco @relation(fields: [enderecoId], references: [id])
-  enderecoId Int @unique
+  enderecoId Int      @unique
   telefone   String
   empresa    String?
   pedidos    Pedido[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 }
 
 model Endereco {
-  id       Int      @id @default(autoincrement())
-  rua      String
-  numero   String
-  cidade   String
-  estado   String
-  cep      String
-  cliente  Cliente?
+  id      Int      @id @default(autoincrement())
+  rua     String
+  numero  String
+  cidade  String
+  estado  String
+  cep     String
+  cliente Cliente?
 }
 
 model Pedido {
-  id         Int      @id @default(autoincrement())
-  clienteId  Int
-  cliente    Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
-  produtos   PedidoProduto[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  id          Int             @id @default(autoincrement())
+  clienteId   Int
+  cliente     Cliente         @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  produtos    PedidoProduto[]
+  total       Float
+  observacao  String?         @db.VarChar(100)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @default(now())
 }
 
 model PedidoProduto {
-  pedidoId  Int
-  produtoId Int
+  pedidoId   Int
+  produtoId  Int
   quantidade Int
 
   pedido   Pedido  @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
