@@ -8,8 +8,8 @@ import {
   Delete,
 } from '@nestjs/common';
 import { PedidosService } from './pedidos.service';
-import { CreatePedidoDto } from 'dto/pedidos/create-pedido.dto';
-import { UpdatePedidoDto } from 'dto/pedidos/update-pedido.dto';
+import { CreatePedidoDto } from 'src/dto/pedidos/create-pedido.dto';
+import { UpdatePedidoDto } from 'src/dto/pedidos/update-pedido.dto';
 
 @Controller('pedidos')
 export class PedidosController {
