@@ -9,9 +9,11 @@ import { ClientesModule } from './clientes/clientes.module';
 import { PedidosService } from './pedidos/pedidos.service';
 import { PedidosController } from './pedidos/pedidos.controller';
 import { PedidosModule } from './pedidos/pedidos.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [ProdutosModule, ClientesModule, PedidosModule],
+  imports: [ProdutosModule, ClientesModule, PedidosModule, AuthModule, UsersModule],
   controllers: [AppController, ProdutosController, PedidosController],
   providers: [AppService, PrismaService, ProdutosService, PedidosService],
 })
