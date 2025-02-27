@@ -7,10 +7,14 @@ import { UpdatePedidoDto } from 'src/dto/pedidos/update-pedido.dto';
 export class PedidosService {
   constructor(private prisma: PrismaService) {}
 
-  async getAll() {
-    const pedidos = await this.prisma.pedido.findMany();
+  async getAll(userId: number) {
+    const pedidos = await this.prisma.pedido.findMany({
+      where: { usuarioId: userId },
+    });
     if (!pedidos.length) {
-      throw new NotFoundException('Nenhum pedido encontrado.');
+      throw new NotFoundException(
+        'Nenhum pedido encontrado para este usuário.',
+      );
     }
     return pedidos;
   }
@@ -25,7 +29,7 @@ export class PedidosService {
     return pedido;
   }
 
-  async create(pedido: CreatePedidoDto) {
+  async create(pedido: CreatePedidoDto, userId: number) {
     const { clienteId, produtos, observacao } = pedido;
     try {
       const produtosIds = produtos.map((item) => item.produtoId);
@@ -50,6 +54,7 @@ export class PedidosService {
           cliente: { connect: { id: clienteId } },
           total: total,
           observacao: observacao,
+          usuario: { connect: { id: userId } },
           produtos: {
             create: produtos.map((item) => ({
               produto: { connect: { id: item.produtoId } },
@@ -65,12 +70,12 @@ export class PedidosService {
     }
   }
 
-  async update(id: number, updatePedidoDto: UpdatePedidoDto) {
+  async update(id: number, updatePedidoDto: UpdatePedidoDto, userId: number) {
     const { clienteId, produtos, observacao } = updatePedidoDto;
 
     const produtoIds = produtos.map((item) => item.produtoId);
     const produtosData = await this.prisma.produto.findMany({
-      where: { id: { in: produtoIds } },
+      where: { id: { in: produtoIds }, usuarioId: userId },
     });
 
     let total = produtos.reduce((soma, item) => {
@@ -104,10 +109,10 @@ export class PedidosService {
     return pedidoAtualizado;
   }
 
-  async delete(id: number) {
+  async delete(id: number, userId: number) {
     try {
       const deletedPedido = await this.prisma.pedido.delete({
-        where: { id },
+        where: { id, usuarioId: userId },
       });
       return deletedPedido;
     } catch (error) {
