@@ -7,10 +7,14 @@ import { UpdateClienteDto } from 'src/dto/clientes/update-cliente.dto';
 export class ClientesService {
   constructor(private prisma: PrismaService) {}
 
-  async getAll() {
-    const clientes = await this.prisma.cliente.findMany();
+  async getAll(userId: number) {
+    const clientes = await this.prisma.cliente.findMany({
+      where: { usuarioId: userId },
+    });
     if (!clientes.length) {
-      throw new NotFoundException('Nenhum cliente encontrado.');
+      throw new NotFoundException(
+        'Nenhum cliente encontrado para este usuário.',
+      );
     }
     return clientes;
   }
@@ -25,7 +29,7 @@ export class ClientesService {
     return cliente;
   }
 
-  async create(cliente: CreateClienteDto) {
+  async create(cliente: CreateClienteDto, userId: number) {
     try {
       const novoCliente = await this.prisma.cliente.create({
         data: {
@@ -35,6 +39,7 @@ export class ClientesService {
           },
           telefone: cliente.telefone,
           empresa: cliente.empresa,
+          usuario: { connect: { id: userId } },
         },
         include: {
           endereco: true,
@@ -46,10 +51,10 @@ export class ClientesService {
     }
   }
 
-  async update(id: number, cliente: UpdateClienteDto) {
+  async update(id: number, cliente: UpdateClienteDto, userId: number) {
     try {
       const clienteAtualizado = await this.prisma.cliente.update({
-        where: { id },
+        where: { id, usuarioId: userId },
         data: {
           nome: cliente.nome,
           endereco: {
@@ -68,10 +73,10 @@ export class ClientesService {
     }
   }
 
-  async delete(id: number) {
+  async delete(id: number, userId: number) {
     try {
       const clienteDeletado = await this.prisma.cliente.delete({
-        where: { id },
+        where: { id, usuarioId: userId },
       });
       return clienteDeletado;
     } catch (error) {
