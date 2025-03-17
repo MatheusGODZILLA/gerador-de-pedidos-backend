@@ -10,6 +10,7 @@ export class ClientesService {
   async getAll(userId: number) {
     const clientes = await this.prisma.cliente.findMany({
       where: { usuarioId: userId },
+      include: { endereco: true },
     });
     if (!clientes.length) {
       throw new NotFoundException(
@@ -22,6 +23,7 @@ export class ClientesService {
   async getById(id: number) {
     const cliente = await this.prisma.cliente.findUnique({
       where: { id },
+      include: { endereco: true },
     });
     if (!cliente) {
       throw new NotFoundException(`Cliente com ID ${id} não encontrado.`);
