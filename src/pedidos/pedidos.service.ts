@@ -10,7 +10,16 @@ export class PedidosService {
   async getAll(userId: number) {
     const pedidos = await this.prisma.pedido.findMany({
       where: { usuarioId: userId },
+      include: {
+        cliente: true,
+        produtos: {
+          include: {
+            produto: true,
+          },
+        },
+      },
     });
+
     if (!pedidos.length) {
       throw new NotFoundException(
         'Nenhum pedido encontrado para este usuário.',
@@ -22,9 +31,18 @@ export class PedidosService {
   async getById(id: number) {
     const pedido = await this.prisma.pedido.findUnique({
       where: { id },
+      include: {
+        cliente: true,
+        produtos: {
+          include: {
+            produto: true,
+          },
+        },
+      },
     });
+
     if (!pedido) {
-      throw new NotFoundException(`Pedido com ID ${id} nao encontrado.`);
+      throw new NotFoundException(`Pedido com ID ${id} não encontrado.`);
     }
     return pedido;
   }
@@ -61,6 +79,10 @@ export class PedidosService {
               quantidade: item.quantidade,
             })),
           },
+        },
+        include: {
+          cliente: true,
+          produtos: { include: { produto: true } },
         },
       });
 
